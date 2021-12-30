@@ -7,7 +7,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
-use App\Models\Blog;
+// use App\Models\Blog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -15,18 +15,16 @@ class ApiController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public static function getBlogs() {
+    public function getBlogs()
+    {
         $blogs = DB::table('blogs')->select('*')->get();
         return $blogs;
     }
 
-    public static function getBlogById($id) {
-        $blog = DB::table('blogs')->select('*')->where('id', '=', $id)->get(); 
-        return $blog;
-    }
-
-    public function insertBlog(Request $request) {
-        echo($request);
+    public function insertBlog(Request $request)
+    {
+        $this->validateBlog($request);
+        
         DB::table('blogs')->insert(
             [
                 'title' => $request->input('title'),
@@ -39,10 +37,29 @@ class ApiController extends BaseController
         return redirect('/');
     }
 
-    
-
-    public static function deleteBlogById($id) {
-        DB::table('blogs')->delete($id);
+    public function deleteBlog(Request $request)
+    {
+        DB::table('blogs')->where('id', '=', $request->input('blog-id'))->delete();
         return redirect('/');
+    }
+
+    public function updateBlog(Request $request)
+    {
+        $this->validateBlog($request);
+
+        DB::table('blogs')->where('id', '=', $request->input('blog-id'))->update(
+            array(
+                'title' => $request->input('title'),
+                'content' => $request->input('content'),
+            )
+        );
+        return redirect('/');
+    }
+
+    private function validateBlog(Request $request) {
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+        ]);
     }
 }

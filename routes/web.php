@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
 
 /*
@@ -16,13 +16,9 @@ use App\Http\Controllers\ApiController;
 */
 
 Route::get('/', function () {
-    $blogs = ApiController::getBlogs();
+    $blogs = app(\App\Http\Controllers\ApiController::class)->getBlogs();
     return view('home', compact('blogs'));
 });
-
 Route::post('/create', [ApiController::class, 'insertBlog']);
-
-Route::delete('/delete/{id}', function($id) {
-    $blogs = ApiController::deleteBlogById($id);
-    return view('home', compact('blogs'));
-});
+Route::delete('/delete', [ApiController::class, 'deleteBlog']);
+Route::post('/update', [ApiController::class, 'updateBlog']);
