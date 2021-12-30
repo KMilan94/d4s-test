@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        DB::table('blogs')->insert([
+            'id' => 1,
+            'content' => 'Content of first blog entry',
+            'title' => 'Title of first blog entry',
+            'category' => 'other',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 }
