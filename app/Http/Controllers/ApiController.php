@@ -7,7 +7,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
-// use App\Models\Blog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -17,19 +16,22 @@ class ApiController extends BaseController
 
     public function getBlogs()
     {
-        $blogs = DB::table('blogs')->select('*')->get();
-        return $blogs;
+        return DB::table('blogs')->select('*')->get();
+    }
+
+    public function getCategories()
+    {
+        return ['General', 'Travel', 'Movies', 'Fashion']; // POC categories
     }
 
     public function insertBlog(Request $request)
     {
         $this->validateBlog($request);
-        
         DB::table('blogs')->insert(
             [
                 'title' => $request->input('title'),
                 'content' => $request->input('content'),
-                'category' => 'IT',
+                'category' => $request->input('category'),
                 'created_at' => now(),
                 'updated_at' => now()
             ]
@@ -46,20 +48,23 @@ class ApiController extends BaseController
     public function updateBlog(Request $request)
     {
         $this->validateBlog($request);
-
         DB::table('blogs')->where('id', '=', $request->input('blog-id'))->update(
             array(
                 'title' => $request->input('title'),
                 'content' => $request->input('content'),
+                'category' => $request->input('category'),
+                'updated_at' => now()
             )
         );
         return redirect('/');
     }
 
-    private function validateBlog(Request $request) {
+    private function validateBlog(Request $request)
+    {
         $request->validate([
             'title' => 'required',
             'content' => 'required',
+            'category' => 'required'
         ]);
     }
 }

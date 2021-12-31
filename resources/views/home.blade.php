@@ -5,7 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>D4S Test</title>
-  <link rel="stylesheet" href="../css/app.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -19,27 +20,39 @@
       </div>
     </div>
 
-    <div class="card mb-4" style="width: 10rem;">
+    <select style="width: 100%;" class="select2-multiple form-control mb-4" name="filters[]" multiple="multiple" id="filters">
+      @foreach($categories as $category)
+      <option value="{{ $category }}">{{ $category }}</option>
+      @endforeach
+    </select>
+
+    <div class="card mb-4 mt-4" style="width: 10rem;">
       <button type="button" class="btn btn-primary btn-sm add-button" data-toggle="modal" data-target="#add-modal">Add new</button>
     </div>
 
     <!-- Content -->
     @if($blogs->isEmpty())
-    <div class="card">
+    <div class="card empty-blog">
       <div class="card-body">
-        <h5 class="card-title">No blog entries yet.. add a new one with the 'Add new' button.</h5>
+        <p class="card-text">No blog entries yet.. add a new one with the 'Add new' button.</p>
       </div>
     </div>
     @else
     @foreach($blogs as $blog)
-    <div class="card mb-4" id="blog-{{ $blog->id }}">
-      <div class="card-header">{{ $blog->title }}</div>
-      <div class="card-body">
-        <h5 class="card-title">{{ $blog->content }}</h5>
+    <div class="card blog mb-4" id="blog-{{ $blog->id }}">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">{{ $blog->title }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ $blog->category }}</h6>
       </div>
-      <div class="card-footer text-muted">
-        <button type="button" class="btn btn-sm btn-outline-info edit-button" data-toggle="modal" data-target="#edit-modal" data-id="{{ $blog->id }}">Edit</button>
-        <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-toggle="modal" data-id="{{ $blog->id }}" data-target="#delete-modal">Delete</button>
+      <div class="card-body">
+        <p class="card-text">{{ $blog->content }}</p>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <span class="text-secondary">{{ $blog->updated_at }}</span>
+        <div>
+          <button type="button" class="btn btn-sm btn-outline-info edit-button" data-toggle="modal" data-target="#edit-modal" data-id="{{ $blog->id }}">Edit</button>
+          <button type="button" class="btn btn-sm btn-outline-danger delete-button ml-2" data-toggle="modal" data-id="{{ $blog->id }}" data-target="#delete-modal">Delete</button>
+        </div>
       </div>
     </div>
     @endforeach
@@ -50,10 +63,15 @@
     @include('add-modal')
     @include('edit-modal')
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Load 3rd party dependencies via CDN -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
       $(document).ready(function() {
+
+        // Init modals
         $('body').on('click', '.delete-button', function(event) {
           event.preventDefault();
           let id = $(this).attr('data-id')
@@ -64,15 +82,39 @@
           event.preventDefault();
           let id = $(this).attr('data-id')
           let blog = $(`#blog-${id}`);
-          let title = blog.find('.card-header').html();
-          let content = blog.find('.card-title').html();
+          let title = blog.find('.card-title').html();
+          let content = blog.find('.card-text').html();
+          let category = blog.find('.card-subtitle').html();
           $('#edit-modal-title').val(title);
           $('#edit-modal-content').val(content);
           $('#edit-modal-blog-id').val(id);
+          $("#edit-modal-categories").select2().val(category).trigger('change.select2');
+        });
+
+        // Register select2 instances
+        $('#filters').select2({
+          placeholder: "Select filter",
+          allowClear: true
+        });
+
+        $('#filters').on('select2:select select2:unselect', function(e) {
+          let items = $(this).val();
+          console.log('Items: ', items);
+          $(".blog").each(function(index) {
+            console.log(index + ": " + $(this).text() + this);
+
+          });
+        });
+
+        $('#add-modal-categories').select2({
+          minimumResultsForSearch: -1
+        });
+
+        $('#edit-modal-categories').select2({
+          minimumResultsForSearch: -1
         });
       });
     </script>
-
 </body>
 
 </html>
