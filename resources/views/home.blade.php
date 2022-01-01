@@ -9,17 +9,18 @@
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
-<body>
+<body class="bg-light text-dark">
   <div class="container">
 
     <!-- Header -->
     <div class="jumbotron jumbotron-fluid">
       <div class="container">
-        <h1 class="display-4">D4S Blog</h1>
-        <p class="lead">Laravel CRUD app</p>
+        <h1 class="display-4 text-primary">D4S Blog</h1>
+        <p class="lead text-secondary">Laravel CRUD app</p>
       </div>
     </div>
 
+    <h5>Select filter</h5>
     <select style="width: 100%;" class="select2-multiple form-control mb-4" name="filters[]" multiple="multiple" id="filters">
       @foreach($categories as $category)
       <option value="{{ $category }}">{{ $category }}</option>
@@ -55,10 +56,10 @@
         </div>
       </div>
     </div>
+    @include('empty-filter')
     @endforeach
     @endif
 
-    <!-- Import modals -->
     @include('delete-modal')
     @include('add-modal')
     @include('edit-modal')
@@ -69,6 +70,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+      const categories = @json($categories);
+
       $(document).ready(function() {
 
         // Init modals
@@ -93,17 +96,35 @@
 
         // Register select2 instances
         $('#filters').select2({
-          placeholder: "Select filter",
+          placeholder: "Select",
           allowClear: true
         });
 
         $('#filters').on('select2:select select2:unselect', function(e) {
+          let blogCount = $(".blog").length;
+          if (!blogCount) return;
           let items = $(this).val();
-          console.log('Items: ', items);
-          $(".blog").each(function(index) {
-            console.log(index + ": " + $(this).text() + this);
+          let hiddenBlogCount = 0;
 
+          $(".blog").each(function(index) {
+            if (!items.length) {
+              $(this).show();
+            } else {
+              let blogCategory = $(this).find('.card-subtitle').html().trim();
+              if (items.includes(blogCategory)) {
+                $(this).show();
+              } else {
+                hiddenBlogCount++;
+                $(this).hide();
+              }
+            }
           });
+
+          if (hiddenBlogCount < blogCount) {
+            $("#empty-filter").addClass('d-none');
+          } else {
+            $("#empty-filter").removeClass('d-none');
+          }
         });
 
         $('#add-modal-categories').select2({
