@@ -63,8 +63,8 @@ class ApiController extends BaseController
     {
         $request->validate([
             'title' => ['required', 'max:20'],
-            'content' => ['required', 'max:255'],
-            'category' => 'required'
+            'content' => ['required', 'max:250'],
+            'category' => ['required', 'max:10']
         ]);
     }
 }
