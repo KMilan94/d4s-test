@@ -35,7 +35,7 @@
     @if($blogs->isEmpty())
     <div class="card empty-blog mt-4">
       <div class="card-body">
-        <p class="card-text">No blog entries yet.. add a new one with the 'Add new' button.</p>
+        <p class="card-text">No blog entry found. Add a new one with the 'Add new' button.</p>
       </div>
     </div>
     @else

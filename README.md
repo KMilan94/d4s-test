@@ -1,12 +1,14 @@
 # D4S Test
 
-Laravel CRUD blog app.
+- Laravel CRUD blog app. The project is dependant on Laravel 8.
 
 ## Installation
 
-- Open XAMPP control panel and start Apache and MySQL.
+- Open XAMPP control panel then start Apache and MySQL.
 
-- Open [Link to phpmyadmin](http://localhost/phpmyadmin) and create a database named 'laravel'. Note that it should be served on port **3306**. Change it accordingly in the .env file if needed.
+- Open [phpmyadmin](http://localhost/phpmyadmin) and create a database named 'laravel'. Note that it should be served on port **3306**. Change it accordingly in the .env file if needed.
+
+- Clone the repository into the ~xampp/htdocs directory.
 
 - Migrate the database.
 
@@ -25,3 +27,7 @@ php artisan db:seed
 ```bash
 php artisan serve
 ```
+
+## Blog schema
+
+![Screenshot](schema.png)

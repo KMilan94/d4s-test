@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         DB::table('blogs')->insert([
             'id' => 1,
             'content' => 'Content of first blog entry',
-            'title' => 'Title of first blog entry',
+            'title' => 'Fist blog title',
             'category' => 'General',
             'created_at' => now(),
             'updated_at' => now()
