@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             'id' => 1,
             'content' => 'Content of first blog entry',
             'title' => 'Title of first blog entry',
-            'category' => 'other',
+            'category' => 'General',
             'created_at' => now(),
             'updated_at' => now()
         ]);

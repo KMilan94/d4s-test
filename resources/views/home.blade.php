@@ -21,7 +21,7 @@
     </div>
 
     <h5>Select filter</h5>
-    <select style="width: 100%;" class="select2-multiple form-control mb-4" name="filters[]" multiple="multiple" id="filters">
+    <select class="select2-multiple form-control" name="filters[]" multiple="multiple" id="filters">
       @foreach($categories as $category)
       <option value="{{ $category }}">{{ $category }}</option>
       @endforeach
@@ -33,14 +33,14 @@
 
     <!-- Content -->
     @if($blogs->isEmpty())
-    <div class="card empty-blog">
+    <div class="card empty-blog mt-4">
       <div class="card-body">
         <p class="card-text">No blog entries yet.. add a new one with the 'Add new' button.</p>
       </div>
     </div>
     @else
     @foreach($blogs as $blog)
-    <div class="card blog mb-4" id="blog-{{ $blog->id }}">
+    <div class="card blog mt-4" id="blog-{{ $blog->id }}">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title">{{ $blog->title }}</h5>
         <h6 class="card-subtitle mb-2 text-muted">{{ $blog->category }}</h6>
@@ -50,7 +50,7 @@
       </div>
       <div class="card-footer d-flex justify-content-between">
         <span class="text-secondary">{{ $blog->updated_at }}</span>
-        <div>
+        <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-sm btn-outline-info edit-button" data-toggle="modal" data-target="#edit-modal" data-id="{{ $blog->id }}">Edit</button>
           <button type="button" class="btn btn-sm btn-outline-danger delete-button ml-2" data-toggle="modal" data-id="{{ $blog->id }}" data-target="#delete-modal">Delete</button>
         </div>
@@ -91,7 +91,7 @@
           $('#edit-modal-title').val(title);
           $('#edit-modal-content').val(content);
           $('#edit-modal-blog-id').val(id);
-          $("#edit-modal-categories").select2().val(category).trigger('change.select2');
+          $("#edit-modal-categories").val(category).trigger('change.select2');
         });
 
         // Register select2 instances
@@ -100,18 +100,26 @@
           allowClear: true
         });
 
+        $('#add-modal-categories').select2({
+          minimumResultsForSearch: -1
+        });
+
+        $('#edit-modal-categories').select2({
+          minimumResultsForSearch: -1
+        });
+
         $('#filters').on('select2:select select2:unselect', function(e) {
           let blogCount = $(".blog").length;
           if (!blogCount) return;
-          let items = $(this).val();
+          let filterValues = $(this).val();
           let hiddenBlogCount = 0;
 
           $(".blog").each(function(index) {
-            if (!items.length) {
+            if (!filterValues.length) {
               $(this).show();
             } else {
               let blogCategory = $(this).find('.card-subtitle').html().trim();
-              if (items.includes(blogCategory)) {
+              if (filterValues.includes(blogCategory)) {
                 $(this).show();
               } else {
                 hiddenBlogCount++;
@@ -125,14 +133,6 @@
           } else {
             $("#empty-filter").removeClass('d-none');
           }
-        });
-
-        $('#add-modal-categories').select2({
-          minimumResultsForSearch: -1
-        });
-
-        $('#edit-modal-categories').select2({
-          minimumResultsForSearch: -1
         });
       });
     </script>

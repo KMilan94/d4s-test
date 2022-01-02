@@ -62,8 +62,8 @@ class ApiController extends BaseController
     private function validateBlog(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'content' => 'required',
+            'title' => ['required', 'max:20'],
+            'content' => ['required', 'max:255'],
             'category' => 'required'
         ]);
     }

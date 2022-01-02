@@ -12,8 +12,10 @@
           @csrf
           @method('DELETE')
           <input type="hidden" name="blog-id" id="delete-modal-blog-id">
-          <button class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-          <button class="btn btn-danger btn-sm ml-2" type="submit">Delete</button>
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+            <button class="btn btn-danger btn-sm ml-2" type="submit">Delete</button>
+          </div>
         </form>
       </div>
     </div>
